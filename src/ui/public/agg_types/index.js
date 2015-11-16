@@ -5,6 +5,7 @@ define(function (require) {
     var aggs = {
       metrics: [
         Private(require('ui/agg_types/metrics/count')),
+        Private(require('ui/agg_types/metrics/scripted')),
         Private(require('ui/agg_types/metrics/avg')),
         Private(require('ui/agg_types/metrics/sum')),
         Private(require('ui/agg_types/metrics/median')),

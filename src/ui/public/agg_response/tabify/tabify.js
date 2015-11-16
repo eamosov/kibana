@@ -34,14 +34,28 @@ define(function (require) {
       switch (agg.schema.group) {
         case 'buckets':
           var buckets = new Buckets(bucket[agg.id]);
+          var cu = 0;
+
           if (buckets.length) {
             var splitting = write.canSplit && agg.schema.name === 'split';
             if (splitting) {
               write.split(agg, buckets, function forEachBucket(subBucket, key) {
+
+                cu = subBucket.cu_doc_count =  cu + subBucket.doc_count;
+                subBucket.parent  = {'doc_count' : bucket.doc_count};
+                if (bucket.parent) {
+                  subBucket.parent.parent = bucket.parent;
+                }
                 collectBucket(write, subBucket, agg.getKey(subBucket), key);
               });
             } else {
               buckets.forEach(function (subBucket, key) {
+
+                cu = subBucket.cu_doc_count =  cu + subBucket.doc_count;
+                subBucket.parent  = {'doc_count' : bucket.doc_count};
+                if (bucket.parent) {
+                  subBucket.parent.parent = bucket.parent;
+                }
                 write.cell(agg, agg.getKey(subBucket, key), function () {
                   collectBucket(write, subBucket, agg.getKey(subBucket, key));
                 });
